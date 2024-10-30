@@ -19,7 +19,7 @@ import streamlit as st
 st.set_page_config(
     page_title="Electricity Demand Forecaster",
     page_icon="🔋",
-    layout="wide",
+    layout="centered",
     initial_sidebar_state="expanded")
 
 #Creates a title
