@@ -1,6 +1,6 @@
-# Great Britain Hourly Electricity Demand Forecaster 🔋⚡[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://option-pricing-tool.streamlit.app)
+# Great Britain Hourly Electricity Demand Forecaster 🔋⚡[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://electricity-demand-forecaster.streamlit.app/)
 
-The Great Britain Hourly Electricity Demand Forecaster is an interactive Streamlit-based application. It offers a demonstration of forecasted electricity demand, utilizing only historical data as a baseline. The application allows users to simulate forecasts under various hyperparameter tuning with the help of assessing model fit, aiding in informed forecasting outcomes. Check it out here: [![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://option-pricing-tool.streamlit.app)
+The Great Britain Hourly Electricity Demand Forecaster is an interactive Streamlit-based application. It offers a demonstration of forecasted electricity demand, utilizing only historical data as a baseline. The application allows users to simulate forecasts under various hyperparameter tuning with the help of assessing model fit, aiding in informed forecasting outcomes. Check it out here: [![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://electricity-demand-forecaster.streamlit.app/)
 
 ## Features
 
@@ -20,7 +20,7 @@ This tool is intended to demonstrate a forecast of electricity demand in Great B
 
 ---
 
-For more information or to contact the developer, please visit [n8tn's GitHub Profile](https://github.com/n8tn). [![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://option-pricing-tool.streamlit.app)
+For more information or to contact the developer, please visit [n8tn's GitHub Profile](https://github.com/n8tn). [![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://electricity-demand-forecaster.streamlit.app/)
 
 
 
