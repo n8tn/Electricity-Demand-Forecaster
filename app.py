@@ -35,7 +35,6 @@ with st.sidebar:
         )
     prophet_url = "https://facebook.github.io/prophet/"
     st.markdown(f'<a href="{prophet_url}" target="_blank" style="text-decoration: none; color: inherit;"><img src="https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/meta-icon.png" width="25" height="25" style="vertical-align: middle; margin-right: 10px;">`Prophet | Forecasting at scale`</a>', unsafe_allow_html=True)
-    st.divider()
     st.subheader("Choose Your :red[Parameters] 🎯")
     n = st.slider('Horizon (hours)', min_value=1, max_value=1440, value=24, step=1)
     cp = st.slider('Changepoint Prior Scale', min_value=0.001, max_value=0.5, value=0.05, step=0.001)
