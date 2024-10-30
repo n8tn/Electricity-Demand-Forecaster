@@ -1,3 +1,4 @@
+# Import libraries
 import pandas as pd
 import numpy as np
 from pprint import pprint
@@ -6,137 +7,106 @@ import matplotlib.pyplot as plt
 from matplotlib.colors import LinearSegmentedColormap
 from scipy.stats import norm
 import streamlit as st
+from prophet import Prophet
+from prophet.plot import plot_plotly, plot_components_plotly
+from prophet.diagnostics import cross_validation
+import plotly.graph_objects as go
+from datetime import timedelta
+from sklearn.metrics import r2_score
+import streamlit as st
 
-#Creates a wide layout and title for the Streamlit app
-st.set_page_config(layout="wide")
+#Creates a wide layout, page title and configuration for the Streamlit app
+st.set_page_config(
+    page_title="Electricity Demand Forecaster",
+    page_icon="🔋",
+    layout="wide",
+    initial_sidebar_state="expanded")
 
-st.title('Options Pricing & PnL Tool 💵')
+#Creates a title
+st.title('Great Britain Hourly Electricity Demand Forecaster 🔋⚡')
 
-#Provides a description on the app and how to use it
-st.write(
-        f"This tool performs two key functions: **(1)** It calculates option prices using the five factors in the Black-Scholes pricing model—**Stock Price, Strike Price, Risk-Free Interest Rate, Volatility, & Time To Expiration**; **(2)** It computes Profit and Loss (PnL) based on user-selected naked strategies and input parameters. A practical use case for this tool would be initializing your strategy and inputs at time **(_T0_)**, then adjusting parameters at time **(_T1_)** to simulate potential payoffs under different scenarios."
+with st.sidebar:
+    st.write("`Created by:`")
+    linkedin_url = "https://www.linkedin.com/in/nathan-rodrigues/"
+    st.markdown(f'<a href="{linkedin_url}" target="_blank" style="text-decoration: none; color: inherit;"><img src="https://cdn-icons-png.flaticon.com/512/174/174857.png" width="25" height="25" style="vertical-align: middle; margin-right: 10px;">`Nathan Rodrigues`</a>', unsafe_allow_html=True)
+    #Provides a description on the app and how to use it
+    st.caption(
+        f"This tool uses the Prophet forecasting package developed by Meta (link below) to forecast hourly load values (MW) - based solely on historical data."
         )
+    prophet_url = "https://facebook.github.io/prophet/"
+    st.markdown(f'<a href="{prophet_url}" target="_blank" style="text-decoration: none; color: inherit;"><img src="https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/meta-icon.png" width="25" height="25" style="vertical-align: middle; margin-right: 10px;">`Prophet | Forecasting at scale`</a>', unsafe_allow_html=True)
+    st.divider()
+    st.subheader("Choose Your :red[Parameters] 🎯")
+    n = st.slider('Horizon (hours)', min_value=1, max_value=1440, value=24, step=1)
+    cp = st.slider('Changepoint Prior Scale', min_value=0.001, max_value=0.5, value=0.05, step=0.001)
+    sp = st.slider('Seasonality Prior Scale', min_value=0.01, max_value=10.0, value=10.0, step=0.01)
+    type = st.selectbox("Choose a Seasonality Mode:", ("additive", "multiplicative"))
+    ds = st.checkbox("Daily Seasonality", value=True)
+    ys = st.checkbox("Yearly Seasonality", value=True)
+    st.caption('**Source**: _European Network of Transmission System Operators for Electricity_')
+    source_url = "https://www.entsoe.eu/data/power-stats/"
+    st.markdown(f'<a href="{source_url}" target="_blank" style="text-decoration: none; color: inherit;"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ8b6pcuOYx5_iHQ7iSmvbXqh0Hy5RY6JuQNH4c9qBsWqBtn0X0BborYQRolvNpTXY4J58&usqp=CAU" width="25" height="25" style="vertical-align: middle; margin-right: 10px;">`ENTSO-E`</a>', unsafe_allow_html=True)
 
-st.latex(r'''
-         *Call Formula: C(S_{t},K,t)=S_{t}\Phi (d_{1})-Ke^{-r(T-t)}\Phi (d_{2}), *Put Formula: P(S_{t},K,t)=Ke^{-r(T-t)}\Phi (-d_{2})-S_{t}\Phi (-d_{1}), *Parameters: d_{1}=\frac{\ln\frac{S_{t}}{K} + (r + \frac{\sigma^2}{2})\tau}{\sigma\sqrt{\tau}}, d_{2}=d_{1}-\sigma\sqrt{\tau}
-         ''')
+#####################################
+# Load data for Great Britain
+GB = pd.read_excel('GB.xlsx')
 
-#Creates sections for user parameters
-st.subheader("Choose Your :red[Parameters] 🎯")
-K = st.slider('Strike Price', min_value=50, max_value=200, value=95, step=1, format = "$%d")
+# Model and Prediction
+m = Prophet(changepoint_prior_scale = cp, 
+            seasonality_prior_scale = sp,
+            seasonality_mode = type,
+            daily_seasonality=ds,
+            yearly_seasonality=ys
+            ).fit(GB)
+future = m.make_future_dataframe(n, freq='h')
+fcst = m.predict(future)
 
-col1, col2, col3 = st.columns([1,1,1.5])
+# Plot the forecasts
+fig = plot_plotly(m, fcst)
 
-with st.container():
-    st.text("") # Adds space
-
-    with col1:
-        type = st.selectbox("Choose a naked option:", ("Call", "Put"))
-    with col2:
-        position = st.selectbox("Choose a position:", ("Long", "Short"))
-
-with st.container():    
-    with col1:
-        st.text("") # Adds space
-        st.subheader("At Time _T0_")
-        S1 = st.slider('Underlying Stock Price at _T0_', min_value=50, max_value=200, value=100, step=1, format = "$%d")
-        r1 = st.slider('Risk Free Rate at _T0_', min_value=0.01, max_value=0.10, value=0.03, step=0.01)
-        v1 = st.slider('Volatility at _T0_', min_value=0.01, max_value=1.0, value=0.20, step=0.01)
-        t1 = st.slider('Days to Expiration at _T0_', min_value=1, max_value=730, value=60, step=1)/365
-
-with st.container():
-    with col2:
-        st.text("") # Adds space
-        st.subheader("At Time _T1_")
-        S2 = st.slider('Underlying Stock Price at _T1_', min_value=50, max_value=200, value=101, step=1, format = "$%d")
-        r2 = st.slider('Risk Free Rate at _T1_', min_value=0.01, max_value=1.00, value=0.03, step=0.01)
-        v2 = st.slider('Volatility at _T1_', min_value=0.01, max_value=1.0, value=0.20, step=0.01)
-        t2 = st.slider('Days to Expiration at _T1_', min_value=1, max_value=730, value=40, step=1)/365
-
-# A function for calculating ranges for prices
-def ranges(x):
-    upper_bound = x + 4
-    lower_bound = x - 4
-    ranges = np.linspace(lower_bound, upper_bound, 9)
-    return(pd.Series(ranges.astype(int)))
-
-# A function for deriving Black-Scholes prices
-def BlackScholes(S, K, r, t, v, type = "Call"):
-    "Calculate Black-Scholes option price for a call/put"
-    d1 = (np.log(S/K) + (r + (v**2)/2)*t) / (v*(t)**0.5)
-    d2 = d1 - (v*(t)**0.5)
-    try:
-        if type == "Call":
-            # Call Option Price
-            Price = round(norm.cdf(d1, 0, 1)*S - norm.cdf(d2, 0, 1)*K*np.exp(-r*t), 2)
-        elif type == "Put":
-            # Put Option Price
-            Price = round(norm.cdf(-d2, 0, 1)*K*np.exp(-r*t) - norm.cdf(-d1, 0, 1)*S, 2)
-        return Price
-    except:
-        print("Please confirm all option parameters above")
-
-# A function for calculating option payoffs
-def calculate_payoff(S1, K, r1, t1, v1, S2, r2, t2, v2, option="Call", position="Long"):
-    # Determine option type (Call or Put)
-    entry = BlackScholes(S1, K, r1, t1, v1, option)
-    exit = BlackScholes(S2, K, r2, t2, v2, option)
-    # Calculate net profit or loss
-    net = round((exit - entry) * 100, 2) if position == "Long" else round((entry - exit) * 100, 2)
-    # Print the result
-    return net
-
-#Calculating ranges for spot and strike prices
-spot_range = ranges(S2)
-strike_range = ranges(K)
-
-#Creates a dataframe of spots and stikes
-df = pd.DataFrame(
-    [(spot, strike) for spot in spot_range for strike in strike_range],
-    columns=['Spot Prices', 'Strike Prices']
+# Customize layout for better visualization
+fig.update_layout(
+    xaxis_title = "Date",
+    yaxis_title = "Load Values (MW)",
+    template = "plotly_dark",  # Dark theme
+    yaxis=dict(
+        autorange=True,
+        fixedrange=False
+    ),
+    xaxis=dict(
+        rangeselector=dict(visible=True)  # Disable timeframe buttons
+    )
 )
 
-#Calculates payoffs on a range of spos and strikes
-df['P&L'] = df.apply(lambda row: calculate_payoff(S1, row['Strike Prices'], r1, t1, v1, row['Spot Prices'], r2, t2, v2, type, position), axis=1)
+# Update scatter plot markers for demand values to be white
+fig.update_traces(
+    marker=dict(color="mintcream"),
+    selector=dict(mode="markers", type="scatter")
+)
 
-# Pivot DataFrame
-heatmap_data = df.pivot(index='Spot Prices', columns='Strike Prices', values='P&L')
+# Compute the R-squared
+metric_df = fcst.set_index('ds')[['yhat']].join(GB.set_index('ds').y).reset_index()
+metric_df.dropna(inplace = True)
+r2 = r2_score(metric_df.y, metric_df.yhat)
+r2_formatted = '{:,.2%}'.format(r2)
 
-# Create a custom colormap
-c = ["darkred","red","white","green","darkgreen"]
-v = [0, .25, .5, .75, 1.]
-l = list(zip(v,c))
-cmap=LinearSegmentedColormap.from_list('rg',l, N=256)
+# Average hourly forecast
+abs = fcst.tail(n)
+abs_avg = np.average(abs["yhat"])
+abs_avg_formatted = '{:,.2f} MW'.format(abs_avg)
 
-#Creates a section for creating and displaying the heatmap
-with st.container():
-    with col3:
-        st.subheader(f'A Heatmap of Spot Prices Against Strike Prices 👇')
+with st.container(border = True):
+    st.subheader("**R-Squared**")
+    st.metric("**R-Squared**", r2_formatted, delta=None, delta_color="normal", help=None, label_visibility="collapsed")
+with st.container(border = True):
+    st.subheader(f"**Average hourly forecast for the next :red[{n} hours] is**")
+    st.metric(f"**Average forecast for the next :red[_{n} hours_] is**", abs_avg_formatted, delta=None, delta_color="normal", help=None, label_visibility="collapsed")
 
-        #Conditionally format the string result
-        net_return = round(calculate_payoff(S1, K, r1, t1, v1, S2, r2, t2, v2, type, position))
-        color = "green" if net_return >= 0 else "red"
-        emoji = "👍" if net_return >= 0 else "👎"
+st.markdown(f'👇 Hover over the interactive chart to zoom in or out 🔍')
 
-        st.caption(f"If you went :red[**{position} on a ${K} {type} Strike at _T0_**] & the underlying reached :red[**${S2} at _T1_**], your net return would be :{color}[**${net_return}**{emoji}].")
-        # Create an annotated heatmap with a dark background style
-        plt.style.use('dark_background')
-
-        plt.figure(figsize=(10,8))
-        plt.rcParams.update({'font.size': 10})
-        sns.heatmap(
-            heatmap_data,
-            cmap=cmap,
-            vmin=df['P&L'].min(),
-            vmax=df['P&L'].max(),
-            annot=True,
-            fmt=".0f",
-            square=False,
-            linewidths=3,
-            center=0,
-            cbar_kws={'label': 'PnL ($)'}
-        )
-        st.pyplot(plt)
+with st.container(border = True):
+    # Display the figure in Streamlit
+    st.plotly_chart(fig)
 
 #Formats the title to be placed higher on the app
 st.markdown(

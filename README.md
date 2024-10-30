@@ -1,12 +1,12 @@
-# Options Pricing & P&L Tool 💵[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://option-pricing-tool.streamlit.app)
+# Great Britain Hourly Electricity Demand Forecaster 🔋⚡[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://option-pricing-tool.streamlit.app)
 
-The Options Pricing & Profitability Tool is an interactive Streamlit-based application. It offers an analysis of naked options trading strategies, providing insights into potential payoffs and risks. The application allows users to simulate different market conditions and option parameters, aiding in informed trading decisions. Check it out here: [![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://option-pricing-tool.streamlit.app)
+The Great Britain Hourly Electricity Demand Forecaster is an interactive Streamlit-based application. It offers an demonstration of forecasted electricity demand, uztiling only historical data as a baseline. The application allows users to simulate forecasts under various hyperparameter tuning with the help of assessing model fit, aiding in informed forecasting outcomes. Check it out here: [![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://option-pricing-tool.streamlit.app)
 
 ## Features
 
-- **Dynamic User Input**: Users can input key parameters such as the underlying stock price, strike price, risk-free interest rate, volatility, & time to expirations.
-- **Payoff Calculations**: The tool calculates the payoff for each naked option strategy across a range of various parameters at expiry.
-- **Interactive Payoff Diagram**: Visualize the net payoff with an intuitive Plotly graph, highlighting the different payoff scenarious across spot and strike prices.
+- **Dynamic User Input**: Users can fine tune key hyperparameters such as the forecast horizon, changepoint scale, seasonality scale, seasonality mode, & seasonality type.
+- **Model Results & Fit**: The tool calculates the average electricity demand for the horizon in addition to the R-Squared value.
+- **Interactive Forecast Chart**: Visualize the forecasts with an intuitive Plotly graph, highlighting the model fit across an hourly timeframe.
 
 ## Technical Stack
 
@@ -16,7 +16,7 @@ The Options Pricing & Profitability Tool is an interactive Streamlit-based appli
 
 ## Usage
 
-This tool is intended to demonstrate an analysis of naked trading strategies. It allows for the simulation of different market conditions and provides a visual representation of potential outcomes.
+This tool is intended to demonstrate a forecast of electricity demand in Great Britain using a historical data as a basis. It allows for the simulation of forecasts and provides a visual representation of potential outcomes.
 
 ---
 
