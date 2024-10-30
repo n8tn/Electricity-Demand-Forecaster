@@ -31,7 +31,7 @@ with st.sidebar:
     st.markdown(f'<a href="{linkedin_url}" target="_blank" style="text-decoration: none; color: inherit;"><img src="https://cdn-icons-png.flaticon.com/512/174/174857.png" width="25" height="25" style="vertical-align: middle; margin-right: 10px;">`Nathan Rodrigues`</a>', unsafe_allow_html=True)
     #Provides a description on the app and how to use it
     st.caption(
-        f"This tool uses the Prophet forecasting package developed by Meta (link below) to forecast hourly load values (MW) in Great Britain- based solely on historical data. Play around with the hyperparameters below to discover how they affect the model accuracy."
+        f"This tool uses the Prophet forecasting package developed by Meta (link below) to forecast hourly load values (MW) in Great Britain - based solely on historical data. Play around with the hyperparameters below to discover how they affect the model accuracy."
         )
     prophet_url = "https://facebook.github.io/prophet/"
     st.markdown(f'<a href="{prophet_url}" target="_blank" style="text-decoration: none; color: inherit;"><img src="https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/meta-icon.png" width="25" height="25" style="vertical-align: middle; margin-right: 10px;">`Prophet | Forecasting at scale`</a>', unsafe_allow_html=True)
