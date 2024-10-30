@@ -105,7 +105,7 @@ st.markdown(f'👇 Hover over the interactive chart to zoom in or out 🔍')
 
 with st.container(border = True):
     # Display the figure in Streamlit
-    st.plotly_chart(fig)
+    st.plotly_chart(fig, use_container_width=True)
 
 #Formats the title to be placed higher on the app
 st.markdown(
