@@ -1,6 +1,6 @@
 # Great Britain Hourly Electricity Demand Forecaster 🔋⚡[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://option-pricing-tool.streamlit.app)
 
-The Great Britain Hourly Electricity Demand Forecaster is an interactive Streamlit-based application. It offers an demonstration of forecasted electricity demand, uztiling only historical data as a baseline. The application allows users to simulate forecasts under various hyperparameter tuning with the help of assessing model fit, aiding in informed forecasting outcomes. Check it out here: [![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://option-pricing-tool.streamlit.app)
+The Great Britain Hourly Electricity Demand Forecaster is an interactive Streamlit-based application. It offers a demonstration of forecasted electricity demand, utilizing only historical data as a baseline. The application allows users to simulate forecasts under various hyperparameter tuning with the help of assessing model fit, aiding in informed forecasting outcomes. Check it out here: [![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://option-pricing-tool.streamlit.app)
 
 ## Features
 
