@@ -96,10 +96,10 @@ abs_avg_formatted = '{:,.2f} MW'.format(abs_avg)
 
 with st.container(border = True):
     st.subheader("**R-Squared**")
-    st.metric("**R-Squared**", r2_formatted, delta=None, delta_color="normal", help=None, label_visibility="collapsed")
+    st.metric("**R-Squared**", r2_formatted, delta=None, delta_color="normal", help=None, label_visibility="collapsed",use_container_width=True)
 with st.container(border = True):
     st.subheader(f"**Average hourly forecast for the next :red[{n} hours] is**")
-    st.metric(f"**Average forecast for the next :red[_{n} hours_] is**", abs_avg_formatted, delta=None, delta_color="normal", help=None, label_visibility="collapsed")
+    st.metric(f"**Average forecast for the next :red[_{n} hours_] is**", abs_avg_formatted, delta=None, delta_color="normal", help=None, label_visibility="collapsed", use_container_width=True)
 
 st.markdown(f'👇 Hover over the interactive chart to zoom in or out 🔍')
 
